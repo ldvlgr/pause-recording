@@ -1,0 +1,15 @@
+{
+  "name": "pause-recording",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "8.10.0"
+  },
+  "dependencies": {
+    "twilio-flex-token-validator": "^1.5.1"
+  }
+}
