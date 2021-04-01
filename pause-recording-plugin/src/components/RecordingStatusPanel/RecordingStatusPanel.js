@@ -4,8 +4,19 @@ import { bindActionCreators } from 'redux';
 import { Manager, withTheme, withTaskContext } from '@twilio/flex-ui';
 import RecordingUtil from '../../utils/RecordingUtil';
 import { Actions as RecordingStatusActions, } from '../../states/RecordingState';
+import styled from '@emotion/styled';
 
-
+const Status = styled('div')`
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  align-items: center;
+  text-align: center;
+`;
 class RecordingStatusPanel extends React.Component {
   //Get initial recording status
   componentDidMount() {
@@ -14,15 +25,17 @@ class RecordingStatusPanel extends React.Component {
       console.log('Recording Sid Returned: ', rec.sid, 'status:', rec.status);
       //Update app state in Redux store
       this.props.setRecordingStatus(rec.status);
+    }).catch(err => {
+      this.props.setRecordingStatus('');
     });
   }
 
   render() {
 
     return (
-      <span>
-        <p>Recording: {this.props.status}</p>
-      </span>
+      <Status>
+        Recording: {this.props.status}
+      </Status>
     );
   }
 }

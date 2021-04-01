@@ -1,11 +1,10 @@
 import React from 'react';
-import { Notifications, TaskHelper, IconButton, Actions, Manager, withTaskContext } from '@twilio/flex-ui';
+import { Notifications, TaskHelper, IconButton, withTaskContext } from '@twilio/flex-ui';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { Actions as RecordingStatusActions, } from '../../states/RecordingState';
 import RecordingUtil from '../../utils/RecordingUtil';
 
-var recordingPaused = false;
 let recSid; //store recording Sid
 const RECORDING_PAUSED = 'RecordingPaused';
 const RESUME_RECORDING = 'ResumeRecording';
@@ -27,8 +26,7 @@ class PauseRecordingButton extends React.Component {
   }
 
   handleClick = async (callSid) => {
-    if (recordingPaused) {
-      Notifications.showNotification(RESUME_RECORDING);
+    if (this.props.status == 'paused') {
       try {
         const rec = await RecordingUtil.resumeRecording(callSid, recSid);
         this.setState(recState);
@@ -36,12 +34,11 @@ class PauseRecordingButton extends React.Component {
         console.log('Recording Sid Returned: ', rec.sid, 'status:', rec.status);
         //Update app state in Redux store
         this.props.setRecordingStatus(rec.status);
-        recordingPaused = false;
+        Notifications.showNotification(RESUME_RECORDING);
       } catch (err) {
         console.log('Failed to resume recording');
       }
     } else {
-      Notifications.showNotification(RECORDING_PAUSED);
       try {
         const rec = await RecordingUtil.pauseRecording(callSid);
         this.setState(pauseState);
@@ -50,7 +47,7 @@ class PauseRecordingButton extends React.Component {
         console.log('Recording Sid Returned: ', recSid, 'status:', rec.status);
         //Update app state in Redux store
         this.props.setRecordingStatus(rec.status);
-        recordingPaused = true;
+        Notifications.showNotification(RECORDING_PAUSED);
       } catch (err) {
         console.log('Failed to pause recording');
       }
@@ -60,13 +57,18 @@ class PauseRecordingButton extends React.Component {
 
   render() {
     const isLiveCall = TaskHelper.isLiveCall(this.props.task);
-    const callSid = this.props.task.attributes.call_sid;
+    const isInbound = this.props.task.attributes.direction === 'inbound';
+    let callSid;
+    if (isInbound) {
+      callSid = this.props.task.attributes.call_sid;
+    }
+    //get callSid for outbound call?
     return (
       <IconButton
         icon={this.state.icon}
         key="pause_button"
         style={{ "color": this.state.color }}
-        disabled={!isLiveCall}
+        disabled={!isLiveCall || !isInbound}
         title={this.state.label}
         onClick={() => this.handleClick(callSid)}
       />
