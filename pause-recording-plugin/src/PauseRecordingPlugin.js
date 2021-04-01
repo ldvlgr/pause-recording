@@ -5,6 +5,7 @@ import { FlexPlugin } from 'flex-plugin';
 import CustomTaskListContainer from './components/CustomTaskList/CustomTaskList.Container';
 import reducers, { namespace } from './states';
 import PauseRecordingButton from './components/RecordingButton/PauseRecordingButton';
+import RecordingStatusPanel from './components/RecordingStatusPanel/RecordingStatusPanel';
 
 const PLUGIN_NAME = 'PauseRecordingPlugin';
 
@@ -54,10 +55,14 @@ export default class PauseRecordingPlugin extends FlexPlugin {
       timeout: 3000
     });
 
-
     flex.CallCanvasActions.Content.add(
       <PauseRecordingButton icon="Eye" key="recording_button"></PauseRecordingButton>
     );//
+
+    flex.CallCanvas.Content.add(
+      <RecordingStatusPanel key="recording-status-panel"> </RecordingStatusPanel>, {
+        sortOrder: -1
+      });
   }
 
   /**

@@ -42,7 +42,7 @@ Install the [Flex Plugin extension](https://github.com/twilio-labs/plugin-flex/t
 twilio plugins:install @twilio-labs/plugin-flex@beta
 ```
 
-Install the [Serverless toolkit] (https://www.twilio.com/docs/labs/serverless-toolkit) for the Twilio CLI:
+Install the [Serverless toolkit](https://www.twilio.com/docs/labs/serverless-toolkit) for the Twilio CLI:
 
 ```bash
 twilio plugins:install @twilio-labs/plugin-serverless

@@ -1,8 +1,10 @@
 import React from 'react';
 import { Notifications, TaskHelper, IconButton, Actions, Manager, withTaskContext } from '@twilio/flex-ui';
 import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { Actions as RecordingStatusActions, } from '../../states/RecordingState';
+import RecordingUtil from '../../utils/RecordingUtil';
 
-const manager = Manager.getInstance();
 var recordingPaused = false;
 let recSid; //store recording Sid
 const RECORDING_PAUSED = 'RecordingPaused';
@@ -24,80 +26,41 @@ class PauseRecordingButton extends React.Component {
     this.state = recState;
   }
 
-  handleClick = () => {
+  handleClick = async (callSid) => {
     if (recordingPaused) {
-      this.resumeRecording();
-      //stop timer
-      //save total pause time in conversation_measure_3 attribute
-    } else {
-      this.pauseRecording();
-      //start timer
-    }
-  }
-
-  resumeRecording() {
-    Notifications.showNotification(RESUME_RECORDING);
-    const body = {
-      callSid: this.props.task.attributes.call_sid,
-      recSid: recSid,
-      Token: manager.store.getState().flex.session.ssoTokenPayload.token
-    };
-    // Set up the HTTP options for your request
-    const options = {
-      method: 'POST',
-      body: new URLSearchParams(body),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-      }
-    };
-    // Make the network request using the Fetch API
-    fetch(`${process.env.REACT_APP_SERVICE_BASE_URL}/call-recording/resume-recording`, options)
-      .then(resp => resp.json())
-      .then(data => {
-        console.log(data)
+      Notifications.showNotification(RESUME_RECORDING);
+      try {
+        const rec = await RecordingUtil.resumeRecording(callSid, recSid);
         this.setState(recState);
         console.log("Resume Recording");
+        console.log('Recording Sid Returned: ', rec.sid, 'status:', rec.status);
+        //Update app state in Redux store
+        this.props.setRecordingStatus(rec.status);
         recordingPaused = false;
-      }).catch(e => {
-        console.log("ERROR Resume Call Recording Failed : ", e);
-      });
-
-  }
-
-
-  pauseRecording() {
-    Notifications.showNotification(RECORDING_PAUSED);
-    const body = {
-      callSid: this.props.task.attributes.call_sid,
-      Token: manager.store.getState().flex.session.ssoTokenPayload.token
-    };
-    // Set up the HTTP options for your request
-    const options = {
-      method: 'POST',
-      body: new URLSearchParams(body),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      } catch (err) {
+        console.log('Failed to resume recording');
       }
-    };
-    // Make the network request using the Fetch API
-    fetch(`${process.env.REACT_APP_SERVICE_BASE_URL}/call-recording/pause-recording`, options)
-      .then(resp => resp.json())
-      .then(data => {
-        console.log(data)
+    } else {
+      Notifications.showNotification(RECORDING_PAUSED);
+      try {
+        const rec = await RecordingUtil.pauseRecording(callSid);
         this.setState(pauseState);
         console.log("Pause Recording");
-        recSid = data.sid;
-        console.log('Recording Sid Returned: ', recSid);
+        recSid = rec.sid;
+        console.log('Recording Sid Returned: ', recSid, 'status:', rec.status);
+        //Update app state in Redux store
+        this.props.setRecordingStatus(rec.status);
         recordingPaused = true;
-      }).catch(e => {
-        console.log("ERROR Pause Call Recording Failed : ", e);
-      });
+      } catch (err) {
+        console.log('Failed to pause recording');
+      }
+    }
   }
-
 
 
   render() {
     const isLiveCall = TaskHelper.isLiveCall(this.props.task);
+    const callSid = this.props.task.attributes.call_sid;
     return (
       <IconButton
         icon={this.state.icon}
@@ -105,16 +68,19 @@ class PauseRecordingButton extends React.Component {
         style={{ "color": this.state.color }}
         disabled={!isLiveCall}
         title={this.state.label}
-        onClick={this.handleClick}
+        onClick={() => this.handleClick(callSid)}
       />
     );
   }
 }
-
+//recording object contains status
 const mapStateToProps = state => {
   return {
+    status: state['pause-recording']?.recording?.status
   };
-
 }
-export default connect(mapStateToProps)(withTaskContext(PauseRecordingButton));
+const mapDispatchToProps = (dispatch) => ({
+  setRecordingStatus: bindActionCreators(RecordingStatusActions.setRecordingStatus, dispatch),
+});
 
+export default connect(mapStateToProps, mapDispatchToProps)(withTaskContext(PauseRecordingButton));
