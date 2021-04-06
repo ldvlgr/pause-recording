@@ -2,6 +2,35 @@ import { Manager } from '@twilio/flex-ui';
 const manager = Manager.getInstance();
 
 class RecordingUtil {
+  startCallRecording = async (callSid) => {
+    console.debug('Creating recording for call SID:', callSid);
+    const fetchUrl = `${process.env.REACT_APP_SERVICE_BASE_URL}/call-recording/create-recording`;
+  
+    const fetchBody = {
+      Token: manager.store.getState().flex.session.ssoTokenPayload.token,
+      callSid
+    };
+    const fetchOptions = {
+      method: 'POST',
+      body: new URLSearchParams(fetchBody),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      }
+    };
+  
+    let recording;
+    try {
+      const recordingResponse = await fetch(fetchUrl, fetchOptions);
+      recording = await recordingResponse.json();
+      console.debug('Created recording', recording);
+    } catch (error) {
+      console.error(`Error creating recording for call SID ${callSid}.`, error);
+    }
+  
+    return recording;
+  }
+
+
   getRecording = (callSid) => {
     return new Promise((resolve, reject) => {
       const body = {

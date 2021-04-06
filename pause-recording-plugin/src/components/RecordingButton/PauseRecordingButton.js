@@ -25,7 +25,8 @@ class PauseRecordingButton extends React.Component {
     this.state = recState;
   }
 
-  handleClick = async (callSid) => {
+  handleClick = async () => {
+    let callSid = this.props.task.attributes.call_sid;
     if (this.props.status == 'paused') {
       try {
         const rec = await RecordingUtil.resumeRecording(callSid, recSid);
@@ -57,20 +58,14 @@ class PauseRecordingButton extends React.Component {
 
   render() {
     const isLiveCall = TaskHelper.isLiveCall(this.props.task);
-    const isInbound = this.props.task.attributes.direction === 'inbound';
-    let callSid;
-    if (isInbound) {
-      callSid = this.props.task.attributes.call_sid;
-    }
-    //get callSid for outbound call?
     return (
       <IconButton
         icon={this.state.icon}
         key="pause_button"
         style={{ "color": this.state.color }}
-        disabled={!isLiveCall || !isInbound}
+        disabled={!isLiveCall}
         title={this.state.label}
-        onClick={() => this.handleClick(callSid)}
+        onClick={() => this.handleClick()}
       />
     );
   }

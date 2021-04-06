@@ -8,6 +8,7 @@ import PauseRecordingButton from './components/RecordingButton/PauseRecordingBut
 import RecordingStatusPanel from './components/RecordingStatusPanel/RecordingStatusPanel';
 
 const PLUGIN_NAME = 'PauseRecordingPlugin';
+import './listeners/CustomListeners';
 
 export default class PauseRecordingPlugin extends FlexPlugin {
   constructor() {
