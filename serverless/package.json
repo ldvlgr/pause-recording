@@ -7,9 +7,10 @@
   },
   "devDependencies": {},
   "engines": {
-    "node": "8.10.0"
+    "node": "10.17.0"
   },
   "dependencies": {
-    "twilio-flex-token-validator": "^1.5.1"
+    "twilio": "^3.48.0",
+    "twilio-flex-token-validator": "^1.5.3"
   }
 }
