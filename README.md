@@ -11,6 +11,12 @@ This plugin leverages Twilio functions to perform the actual Pause and Resume ac
 
 The application repo contains both a Flex Plugin project as well as a Twilio Serverless project.  Deploy the Serverless functions before deploying the Flex plugin.
 
+This plugin incorporates the base Dual Channel Recording functionality from https://github.com/twilio-professional-services/flex-dual-channel-recording.
+The call recordings are started from the plugin, leveraging a server side Twilio Function to call the Twilio Recordings API. The task attribute conversations.media is updated with the recording metadata so Flex Insights can play the recording.  Call recordings are dual-channel, capturing customer and agent audio in their own audio channels. This solution works for both inbound and outbound calls.
+
+After deploying this plugin, you can disable the Call Recording setting in [Flex Settings](https://www.twilio.com/console/flex/settings) on the Twilio Console.  This is the default single-channel (mono) Conference Call Recording which is now no longer required.
+
+
 # Configuration
 
 ## Setup
@@ -60,6 +66,8 @@ After successfull deployment you should see at least the following:
 ```bash
 ✔ Serverless project successfully deployed
 Functions:
+   https://<your base url>/call-recording/create-recording
+   https://<your base url>/call-recording/list-recordings
    https://<your base url>/call-recording/pause-recording
    https://<your base url>/call-recording/resume-recording
 ```

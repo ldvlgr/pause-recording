@@ -6,35 +6,7 @@ const reservationListeners = new Map();
 
 import RecordingUtil from '../utils/RecordingUtil';
 
-//Copied startCallRecording to RecordingUtil
-//
-// const startCallRecording = async (callSid) => {
-//   console.debug('Creating recording for call SID:', callSid);
-//   const fetchUrl = `https://${process.env.REACT_APP_SERVERLESS_DOMAIN}/create-recording`;
-
-//   const fetchBody = {
-//     Token: manager.store.getState().flex.session.ssoTokenPayload.token,
-//     callSid
-//   };
-//   const fetchOptions = {
-//     method: 'POST',
-//     body: new URLSearchParams(fetchBody),
-//     headers: {
-//       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-//     }
-//   };
-
-//   let recording;
-//   try {
-//     const recordingResponse = await fetch(fetchUrl, fetchOptions);
-//     recording = await recordingResponse.json();
-//     console.debug('Created recording', recording);
-//   } catch (error) {
-//     console.error(`Error creating recording for call SID ${callSid}.`, error);
-//   }
-
-//   return recording;
-// }
+//Moved startCallRecording to RecordingUtil
 
 const addCallDataToTask = async (task, callSid, recording) => {
   const { attributes, conference } = task;
