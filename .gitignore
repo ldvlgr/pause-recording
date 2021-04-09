@@ -64,3 +64,7 @@ typings/
 appConfig.js
 pluginsService.js
 build/
+
+# Twilio Serverless
+.twilio-functions
+
