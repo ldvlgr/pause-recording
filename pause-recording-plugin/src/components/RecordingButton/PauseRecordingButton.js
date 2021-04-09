@@ -8,6 +8,9 @@ import RecordingUtil from '../../utils/RecordingUtil';
 let recSid; //store recording Sid
 const RECORDING_PAUSED = 'RecordingPaused';
 const RESUME_RECORDING = 'ResumeRecording';
+const PAUSE_FAILED = 'PauseFailed';
+const RESUME_FAILED = 'ResumeFailed';
+
 const pauseState = {
   icon: 'EyeBold',
   color: 'red',
@@ -38,6 +41,8 @@ class PauseRecordingButton extends React.Component {
         Notifications.showNotification(RESUME_RECORDING);
       } catch (err) {
         console.log('Failed to resume recording');
+        Notifications.showNotification(RESUME_FAILED);
+
       }
     } else {
       try {
@@ -51,6 +56,7 @@ class PauseRecordingButton extends React.Component {
         Notifications.showNotification(RECORDING_PAUSED);
       } catch (err) {
         console.log('Failed to pause recording');
+        Notifications.showNotification(PAUSE_FAILED);
       }
     }
   }

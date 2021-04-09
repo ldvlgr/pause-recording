@@ -2,7 +2,6 @@ import React from 'react';
 import { VERSION, Notifications, NotificationType } from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
 
-import CustomTaskListContainer from './components/CustomTaskList/CustomTaskList.Container';
 import reducers, { namespace } from './states';
 import PauseRecordingButton from './components/RecordingButton/PauseRecordingButton';
 import RecordingStatusPanel from './components/RecordingStatusPanel/RecordingStatusPanel';
@@ -25,21 +24,22 @@ export default class PauseRecordingPlugin extends FlexPlugin {
   init(flex, manager) {
     this.registerReducers(manager);
 
-    const options = { sortOrder: -1 };
-    // flex.AgentDesktopView
-    //   .Panel1
-    //   .Content
-    //   .add(<CustomTaskListContainer key="PauseRecordingPlugin-component" />, options);
-
     const RECORDING_PAUSED = 'RecordingPaused';
     const RESUME_RECORDING = 'ResumeRecording';
+    const PAUSE_FAILED = 'PauseFailed';
+    const RESUME_FAILED = 'ResumeFailed';
     manager.strings[RECORDING_PAUSED] = (
       'Call recording has been paused. Please remember to resume call recording after collecting payment information.'
     );
     manager.strings[RESUME_RECORDING] = (
       'Resuming recording this call.'
     );
-
+    manager.strings[PAUSE_FAILED] = (
+      'FAILED to pause call recording. Please try again.'
+    );
+    manager.strings[RESUME_FAILED] = (
+      'FAILED to resume call recording. Please try again.'
+    );
 
     Notifications.registerNotification({
       id: RECORDING_PAUSED,
@@ -55,6 +55,22 @@ export default class PauseRecordingPlugin extends FlexPlugin {
       type: NotificationType.success,
       timeout: 3000
     });
+    Notifications.registerNotification({
+      id: PAUSE_FAILED,
+      closeButton: true,
+      content: PAUSE_FAILED,
+      type: NotificationType.error,
+      timeout: 3000
+    });
+    Notifications.registerNotification({
+      id: RESUME_FAILED,
+      closeButton: true,
+      content: RESUME_FAILED,
+      type: NotificationType.error,
+      timeout: 3000
+    });
+
+
 
     flex.CallCanvasActions.Content.add(
       <PauseRecordingButton icon="Eye" key="recording_button"></PauseRecordingButton>
