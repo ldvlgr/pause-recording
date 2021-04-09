@@ -13,7 +13,6 @@ exports.handler = TokenValidator(async function (context, event, callback) {
   response.appendHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Use the NodeJS Helper Library to make an API call.
-  // Note how you are passing the workspace SID using a key from the event parameter.
   try {
     let recording = await client.calls(callSid)
       .recordings('Twilio.CURRENT')
