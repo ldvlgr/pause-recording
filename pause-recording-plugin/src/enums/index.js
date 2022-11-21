@@ -1,20 +1,13 @@
-export const ParticipantStatus = {
-  joined: 'joined',
-  left: 'left'
-};
+function makeEnumObject(obj, key) {
+  if(!obj instanceof Object)
+    throw new Error("Passed object is not an object");
+  
+  obj[key] = key;
+  return obj;
+}
 
-export const ParticipantType = {
-  customer: 'customer',
-  unknown: 'unknown',
-  worker: 'worker'
-};
+export const ParticipantStatus = ['joined', 'left'].reduce(makeEnumObject, {});
 
-export const ReservationEvents = {
-  accepted: 'accepted',
-  rejected: 'rejected',
-  timeout: 'timeout',
-  canceled: 'canceled',
-  rescinded: 'rescinded',
-  completed: 'completed',
-  wrapup: 'wrapup'
-};
+export const ParticipantType = ['customer', 'unknown', 'worker'].reduce(makeEnumObject, {});
+
+export const ReservationEvents = ['accepted', 'rejected', 'timeout', 'canceled', 'rescinded', 'completed', 'wrapup'].reduce(makeEnumObject, {});
